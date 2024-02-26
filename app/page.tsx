@@ -14,7 +14,7 @@ const Home = () => {
   //const startQuiz = () => router.push("/quiz");
 
   const handleButtonClick = () => {
-    router.push("/quiz");
+    router.push("./quiz");
   };
 
   return (
