@@ -15,11 +15,49 @@ type Props = {
 }
 
 const Quiz = ({ questions, totalQuestions }: Props) => {
-    console.log(questions)
+    const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0)  
+    const [score , setScore] = React.useState(0)
+    const [userAnswer, setUserAnswers] = React.useState<{ [id: number]: string}>({})
+
+    const isQuestionAnswered = userAnswer[currentQuestionIndex] ? true : false
+
+    const router = useRouter()  
+
+    const handleAnswerClick = (answer: string, currentQuestionIndex: number) => {
+     
+      //if user has already answered do nothing
+      if (isQuestionAnswered) return
+
+      //check answer againts correct answer
+      const isCorrect = questions[currentQuestionIndex].correct_answer === answer
+
+      //Add score if answer is correct
+      if (isCorrect) setScore(prev => prev + 1)
+
+      //Save the answer in the object for users answers
+      setUserAnswers(prev => ({...prev, [currentQuestionIndex]: answer}))
+
+    }
+
+    const handleChangeQuestion = (step: number) => {
+      const newQuestionIndex = currentQuestionIndex + step
+      if (newQuestionIndex < 0 || newQuestionIndex >= totalQuestions) return
+
+      setCurrentQuestionIndex(newQuestionIndex)
+    }
 
     return (
       <div className='text-white text-center'>
-        Quiz Component
+        <p className='p-8 font-bold text-[20px]'>Score {score}</p>
+        <p className='text-[#9f50ac] font-bold pb-2 text-[14px]'>
+          Question: {currentQuestionIndex + 1} / {totalQuestions}
+        </p>
+        <div className='flex justify-between mt-16'>
+          <Button text="Prev" onClick={() => handleChangeQuestion(-1)} />
+          <Button text={currentQuestionIndex === totalQuestions - 1 ? "End" : "Next"} 
+            onClick={currentQuestionIndex === totalQuestions - 1 ? () => router.push("/result") : () => handleChangeQuestion(1)}>
+          </Button>
+        </div>
       </div>
     )
 }
