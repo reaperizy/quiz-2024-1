@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 //Components
 import Button from '@/components/Button/Button';
+import QuestionCard from '@/components/QuestionCard';
 
 //Types
 import { QuestionsState } from '@/types/quiz';
@@ -17,13 +18,13 @@ type Props = {
 const Quiz = ({ questions, totalQuestions }: Props) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0)  
     const [score , setScore] = React.useState(0)
-    const [userAnswer, setUserAnswers] = React.useState<{ [id: number]: string}>({})
+    const [userAnswers, setUserAnswers] = React.useState<{ [id: number]: string}>({})
 
-    const isQuestionAnswered = userAnswer[currentQuestionIndex] ? true : false
+    const isQuestionAnswered = userAnswers[currentQuestionIndex] ? true : false
 
     const router = useRouter()  
 
-    const handleAnswerClick = (answer: string, currentQuestionIndex: number) => {
+    const handleOnAnswerClick = (answer: string, currentQuestionIndex: number) => {
      
       //if user has already answered do nothing
       if (isQuestionAnswered) return
@@ -52,10 +53,18 @@ const Quiz = ({ questions, totalQuestions }: Props) => {
         <p className='text-[#9f50ac] font-bold pb-2 text-[14px]'>
           Question: {currentQuestionIndex + 1} / {totalQuestions}
         </p>
+        <QuestionCard 
+          currentQuestionIndex={currentQuestionIndex}
+          question={questions[currentQuestionIndex].question}
+          answers={questions[currentQuestionIndex].answers}
+          userAnswer={userAnswers[currentQuestionIndex]}
+          correctAnswer={questions[currentQuestionIndex].correct_answer}
+          onClick={handleOnAnswerClick}
+        />
         <div className='flex justify-between mt-16'>
           <Button text="Prev" onClick={() => handleChangeQuestion(-1)} />
           <Button text={currentQuestionIndex === totalQuestions - 1 ? "End" : "Next"} 
-            onClick={currentQuestionIndex === totalQuestions - 1 ? () => router.push("/result") : () => handleChangeQuestion(1)}>
+            onClick={currentQuestionIndex === totalQuestions - 1 ? () => router.push("/") : () => handleChangeQuestion(1)}>
           </Button>
         </div>
       </div>
